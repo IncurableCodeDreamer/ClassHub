@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace ClassHub
 {
@@ -83,7 +84,22 @@ namespace ClassHub
                     default: Console.WriteLine("\n You chose the wrong number. Try again.");
                         break;
                 }           
-            } 
+            }
+
+            XDocument document = new XDocument(
+                new XDeclaration("1.0", "utf-8", "yes"),
+                new XComment("List of students in classes"),
+                new XElement("student",
+                    from person in StudentList
+                    orderby person.ClassName, person.StudentID, person.Name, person.Surname 
+                    select new XElement("student",
+                        new XAttribute("Class", person.ClassName),
+                        new XElement("Id", person.StudentID),
+                        new XElement("Name", person.Name),
+                        new XElement("Surname", person.Surname))));
+
+            document.Save("Students.xml");
+
             Console.ReadKey();
         }
     }
