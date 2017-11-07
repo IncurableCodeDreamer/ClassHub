@@ -1,16 +1,19 @@
 ﻿using System;
 
+
+
 namespace ClassHub
 {
     class Class
     {           
+       
         public string ClassName { get; set; }
         public int ClassID { get; set; }
         
         public Class (string cName, int cID)
         {
-            this.ClassName = cName;
-            this.ClassID = cID;            
+            ClassName = cName;
+            ClassID = cID;            
         }       
 
         public override string ToString()

@@ -4,27 +4,23 @@ namespace ClassHub
 {
     class Student
     {
+        
         public int StudentID { get; private set; }
-        public string Name { get; private set; }
-        public string Surname { get; private set; }
-        public string ClassName { get; private set; }
-        //public Class SClass { get { return sClass.ClassName,sClass.ClassID; } private set; }
-        Class sClass;
+        public string Name { get; set; }        
+        public string Surname { get; set; }        
+        public Class SClass { get; set; }
 
-        public Student(int sID, string cName, int cID, string sName, string sSurname)
+        public Student(int sID, Class cClass, string sName, string sSurname)
         {
-            this.StudentID = sID;
-            this.sClass = new Class(cName, cID);
-            this.Name = sName;
-            this.Surname = sSurname;
-            this.ClassName = this.sClass.ClassName;
-            //this.SClass.ClassName = sClass.ClassName;
-            //this.SClass.ClassID = sClass.ClassID;
+            StudentID = sID;            
+            Name = sName;
+            Surname = sSurname;
+            SClass = cClass;
         }               
 
         public override string ToString()
         {
-            string str = String.Format(" Student {2}: {0} {1} from class {3}. ",Name,Surname,StudentID,ClassName);
+            string str = String.Format(" Student {2}: {0} {1} from class {3}. ",Name,Surname,StudentID,SClass.ClassName);
             return str;
         }        
     }
