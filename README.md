@@ -1,1 +1,1 @@
-# LearnItGirlApp
+# ClassHubApp
