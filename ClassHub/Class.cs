@@ -18,7 +18,7 @@ namespace ClassHub
 
         public override string ToString()
         {
-            string str = String.Format(" Class {0} - {1}. \n", ClassID,ClassName);
+            string str = String.Format(" Class {0} - {1}.", ClassID,ClassName);
             return str;
         }
     }

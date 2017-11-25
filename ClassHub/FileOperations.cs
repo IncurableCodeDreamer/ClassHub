@@ -47,25 +47,7 @@ namespace ClassHub
             w.WriteEndDocument();
             w.Flush();
             w.Close();
-        }
-
-        internal void LoadFileToEdit(string toEdit, string toEditClass, string toEditName, string toEditSurname, List<Class> ClassList)
-        {
-            document = XDocument.Load("ClassHub.xml");
-            var editStudent = document.Root.Elements("Student")
-                                           .Where(s => s.Attribute("StudentID")
-                                           .Value == toEdit);
-            if (editStudent.Any())
-            {
-                editStudent.First().Element("Name").Value = toEditName;
-                editStudent.First().Element("Surname").Value = toEditSurname;
-                editStudent.First().Attribute("ClassID").Value = ClassList.Where(cl => cl.ClassName == toEditClass)
-                                                        .Select(cl => Convert.ToString(cl.ClassID))
-                                                        .ToList()
-                                                        .First();
-            }
-            document.Save("ClassHub.xml");
-        }
+        }       
 
         internal Tuple<List<Student>, List<Class>> LoadFile(List<Student> StudentList, List<Class> ClassList)
         {

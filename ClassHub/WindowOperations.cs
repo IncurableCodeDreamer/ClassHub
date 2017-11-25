@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ClassHub
 {
-    class Interface
+    class WindowOperations
     {
         internal void Show<T>(List<T> ListName)
         {
@@ -16,7 +16,6 @@ namespace ClassHub
 
         internal void Show(List<Class> ClassList, List<Student> StudentList)
         {
-
             foreach (var x in ClassList)
             {
                 var list = StudentList.Where(st => st.SClass.ClassName == x.ClassName)
@@ -26,6 +25,23 @@ namespace ClassHub
                     Console.WriteLine(" {0} has {1} student(s).", x.ClassName, count);
                 }
             }
+        }
+
+        internal void OperationFailed ()
+        {
+            Console.WriteLine(" The operation failed.");
+        }
+
+        internal void OperationSuccess <T> (List<T> ListName, int IdIteration)
+        {
+           try
+           { 
+               Console.WriteLine(ListName[IdIteration - 1].ToString());
+           }
+           catch(ArgumentOutOfRangeException)          
+           {
+               Console.WriteLine(" The operation was a success.");
+           }
         }
     }
 }
