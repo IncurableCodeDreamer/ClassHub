@@ -68,8 +68,8 @@ namespace ClassHub
                  from st in document.Root.Elements("Student")
                  select new Student(
                      int.Parse(st.Attribute("StudentID").Value),
-                     ClassList.Where(cl => cl.ClassID == int.Parse(st.FirstAttribute.Value))
-                     .ToList().First(),
+                     ClassList.Where(cl => cl.ClassID == int.Parse(st.LastAttribute.Value))
+                              .ToList().First(),
                      st.Element("Name").Value,
                      st.Element("Surname").Value))
                      .ToList();

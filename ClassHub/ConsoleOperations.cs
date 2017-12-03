@@ -18,13 +18,21 @@ namespace ClassHub
         {
             foreach (var x in ClassList)
             {
-                var list = StudentList.Where(st => st.SClass.ClassName == x.ClassName)
-                                      .ToList();
-                int count = list.Count();
+                if (StudentList.Exists(st => st.SClass.ClassName == x.ClassName))
                 {
+                    var list = StudentList.Where(st => st.SClass.ClassName == x.ClassName)
+                                                .ToList();
+                    int count = list.Count();
+                    {
+                        Console.WriteLine(" {0} has {1} student(s).", x.ClassName, count);
+                    }
+                }
+                else
+                {
+                    int count = 0;
                     Console.WriteLine(" {0} has {1} student(s).", x.ClassName, count);
                 }
-            }
+            }        
         }
 
         void IWindowOperations.OperationFailed ()
@@ -36,5 +44,10 @@ namespace ClassHub
         {           
           Console.WriteLine(Name.ToString());         
         }    
+
+        void IWindowOperations.NoRecords()
+        {
+            Console.WriteLine(" The list has no records.");
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace ClassHub
             IWindowOperations windowOp = new ConsoleOperations();
             var ClassList = classRep.GetClasses();
             var StudentList = studentRep.GetStudents(ClassList);
-
+           
             Console.WriteLine(" Hello.");
             while (true)
             {
@@ -42,8 +42,10 @@ namespace ClassHub
                         if(!ifExists)
                         {
                             Class newClass = classRep.CreateClass(cName);
-                            classRep.Add(newClass);
-                            windowOp.OperationSuccess(newClass);
+                            if (classRep.Add(newClass))
+                            {
+                                windowOp.OperationSuccess(newClass);
+                            }
                         }
                         else { windowOp.OperationFailed(); }                      
                         break;
@@ -63,56 +65,92 @@ namespace ClassHub
                         else { windowOp.OperationFailed(); }
                         break;
                     case '3':
-                        Console.WriteLine(" Existing classes:");
-                        windowOp.Show(ClassList, StudentList);
-                        Console.Write(" Select the class you want to show: ");
-                        string classType = Console.ReadLine();
-                        var classToShow = studentRep.FindByClassName(classType);                                                  
-                        windowOp.Show(classToShow);
-                        break;
-                    case '4':
-                        Console.WriteLine("\n Select the student you want to edit: ");
-                        windowOp.Show(StudentList);
-                        Console.Write("\n Id: ");
-                        int toEdit = int.Parse(Console.ReadLine());
-                        Console.Write("\n Enter new data:" +
-                                      "\n Name: ");
-                        string toEditName = Console.ReadLine();
-                        Console.Write(" Surname: ");
-                        string toEditSurname = Console.ReadLine();
-                        Console.Write(" Class: ");
-                        string toEditClass = Console.ReadLine();                        
-                        Student studentToEdit = studentRep.FindByID(toEdit);
-                        Student student = studentRep.CreateStudent(studentToEdit.StudentID, toEditName, toEditSurname, classRep.FindByName(toEditClass));
-                        if (studentRep.Edit(studentToEdit,student))
+                        if (classRep.IsEmpty(ClassList))
                         {
-                            windowOp.OperationSuccess(student);
+                            windowOp.NoRecords();
                         }
-                        else { windowOp.OperationFailed(); }                        
-                        break;
-                    case '5':
-                        Console.WriteLine(" Select the class you want to remove.");
-                        windowOp.Show(ClassList);
-                        Console.Write("\n Id: ");
-                        int toRemove = int.Parse(Console.ReadLine());
-                        Class classToRemove = classRep.FindByID(toRemove);
-                        if (classRep.Remove(classToRemove))
+                        else
                         {
-                            windowOp.OperationSuccess(classToRemove);
+                            Console.WriteLine(" Existing classes:");
+                            windowOp.Show(ClassList, StudentList);
+                            Console.Write(" Select the class you want to show: ");
+                            string classType = Console.ReadLine();
+                            var classToShow = studentRep.FindByClassName(classType);
+                            if (studentRep.IsEmpty(classToShow))
+                            {
+                                windowOp.NoRecords();
+                            }
+                            else { windowOp.Show(classToShow); }
                         }
-                        else { windowOp.OperationFailed(); }
                         break;
-                    case '6':
-                        Console.WriteLine(" Select the student you want to remove.");
-                        windowOp.Show(StudentList);
-                        Console.Write("\n Id: ");
-                        toRemove = int.Parse(Console.ReadLine());
-                        Student studentToRemove = studentRep.FindByID(toRemove);
-                        if (studentRep.Remove(studentToRemove))
+                    case '4':                        
+                        if (studentRep.IsEmpty(StudentList))
                         {
-                            windowOp.OperationSuccess(studentToRemove);
+                            windowOp.NoRecords();
                         }
-                        else { windowOp.OperationFailed(); }
+                        else
+                        {
+                            Console.WriteLine("\n Select the student you want to edit: ");
+                            windowOp.Show(StudentList);
+                            Console.Write("\n Id: ");
+                            int toEdit = int.Parse(Console.ReadLine());
+                            Console.Write("\n Enter new data:" +
+                                          "\n Name: ");
+                            string toEditName = Console.ReadLine();
+                            Console.Write(" Surname: ");
+                            string toEditSurname = Console.ReadLine();
+                            Console.Write(" Class: ");
+                            string toEditClass = Console.ReadLine();
+                            Student studentToEdit = studentRep.FindByID(toEdit);
+                            Student student = studentRep.CreateStudent(studentToEdit.StudentID, toEditName, toEditSurname, classRep.FindByName(toEditClass));
+                            if (studentRep.Edit(studentToEdit, student))
+                            {
+                                windowOp.OperationSuccess(student);
+                            }
+                            else { windowOp.OperationFailed(); }
+                        }
+                        break;
+                    case '5':                        
+                        if (classRep.IsEmpty(ClassList))
+                        {
+                            windowOp.NoRecords();
+                        }
+                        else
+                        {
+                            Console.WriteLine(" Select the class you want to remove.");
+                            windowOp.Show(ClassList);
+                            Console.Write("\n Id: ");
+                            int toRemove = int.Parse(Console.ReadLine());
+                            Class classToRemove = classRep.FindByID(toRemove);
+                            var studentsInClassToRemove = studentRep.FindByClassName(classToRemove.ClassName);
+                            if (classRep.Remove(classToRemove))
+                            {
+                                if (studentRep.Remove(studentsInClassToRemove))
+                                {
+                                    windowOp.OperationSuccess(classToRemove);
+                                }
+                            }
+                            else { windowOp.OperationFailed(); }
+                        }
+                        break;
+                    case '6':                        
+                        if (studentRep.IsEmpty(StudentList))
+                        {
+                            windowOp.NoRecords();
+                        }
+                        else
+                        {
+                            Console.WriteLine(" Select the student you want to remove.");
+                            windowOp.Show(StudentList);
+                            Console.Write("\n Id: ");
+                            int toRemove = int.Parse(Console.ReadLine());
+                            Student studentToRemove = studentRep.FindByID(toRemove);
+                            if (studentRep.Remove(studentToRemove))
+                            {
+                                windowOp.OperationSuccess(studentToRemove);
+                            }
+                            else { windowOp.OperationFailed(); }
+                        }
                         break;
                     case '7':
                         studentRep.SaveFile(StudentList, ClassList);

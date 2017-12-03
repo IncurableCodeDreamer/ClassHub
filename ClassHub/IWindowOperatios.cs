@@ -8,6 +8,7 @@ namespace ClassHub
         void Show(List<Class> ClassList, List<Student> StudentList);
         void OperationSuccess<T>(T Name);
         void OperationFailed();
+        void NoRecords();
     }
 }
 

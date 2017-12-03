@@ -16,7 +16,7 @@ namespace ClassHub
                 ClassList = fileOp.LoadFile(ClassList);
                 return ClassList;
             }
-            else { return null; }
+            else { return ClassList; }
         }
 
         internal Class FindByID(int id)
@@ -43,9 +43,19 @@ namespace ClassHub
             return result;
         }
 
-        internal void Add (Class newClass)
+        internal bool IsEmpty(List<Class> ClassList)
+        {
+            if(ClassList.Count == 0)
+            {
+                return true;
+            }
+            else { return false; }
+        }
+
+        internal bool Add (Class newClass)
         {
             ClassList.Add(newClass);
+            return true;
         }
 
         internal bool Remove(Class clasToRemove)

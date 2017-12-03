@@ -16,9 +16,18 @@ namespace ClassHub
                 StudentList = fileOp.LoadFile(StudentList,ClassList);
                 return StudentList;
             }
-            else { return null; }
+            else { return StudentList; }
         }
 
+        internal bool IsEmpty(List<Student> StudentList)
+        {
+            if (StudentList.Count == 0)
+            {
+                return true;
+            }
+            else { return false; }
+        }
+        
         internal Student FindByID (int id)
         {
             Student StudentById = StudentList.Where(x => x.StudentID == id).ToList().First();
@@ -60,6 +69,15 @@ namespace ClassHub
         internal bool Remove(Student studentToRemove)
         {
             StudentList.Remove(studentToRemove);
+            return true;
+        }
+
+        internal bool Remove(List<Student> studentsToRemove)
+        {
+            for (int i = 0; i < studentsToRemove.Count(); i++)
+            {
+                StudentList.Remove(studentsToRemove[i]);
+            }
             return true;
         }
 
