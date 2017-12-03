@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace ClassHub
 {
-    class WindowOperations
+    class ConsoleOperations : IWindowOperations
     {
-        internal void Show<T>(List<T> ListName)
+        void IWindowOperations.Show<T>(List<T> ListName)
         {
             foreach (var x in ListName)
             {
@@ -14,7 +14,7 @@ namespace ClassHub
             }
         }
 
-        internal void Show(List<Class> ClassList, List<Student> StudentList)
+        void IWindowOperations.Show(List<Class> ClassList, List<Student> StudentList)
         {
             foreach (var x in ClassList)
             {
@@ -27,21 +27,14 @@ namespace ClassHub
             }
         }
 
-        internal void OperationFailed ()
+        void IWindowOperations.OperationFailed ()
         {
             Console.WriteLine(" The operation failed.");
         }
 
-        internal void OperationSuccess <T> (List<T> ListName, int IdIteration)
-        {
-           try
-           { 
-               Console.WriteLine(ListName[IdIteration - 1].ToString());
-           }
-           catch(ArgumentOutOfRangeException)          
-           {
-               Console.WriteLine(" The operation was a success.");
-           }
-        }
+        void IWindowOperations.OperationSuccess <T> (T Name)
+        {           
+          Console.WriteLine(Name.ToString());         
+        }    
     }
 }

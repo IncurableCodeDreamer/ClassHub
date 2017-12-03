@@ -1,34 +1,56 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace ClassHub
 {
     class ClassRepository
     {
-        //List<Class> ClassList = new List<Class>();
-        //public Class Item {get { return ClassList.LastOrDefault(); } set { ClassList.Add(value); } }
-        
-        //public List<Class> ClassList { get; private set; }
-        //public List<Class> Content { get; private set; }
-        //int classIdIteration = 0;
+        List<Class> ClassList = new List<Class>();
+        FileOperations fileOp = new FileOperations();
 
-        internal bool Add(List<Class> ClassList,int classIdIteration, string cName)
+        internal List<Class> GetClasses()
         {
-            if (!ClassList.Exists(cl => cl.ClassName == cName))
+            if (File.Exists("ClassHub.xml"))
             {
-                classIdIteration = ClassList.Count() + 1;
-                ClassList.Add(new Class(cName, classIdIteration));
-                return true;
+                ClassList = fileOp.LoadFile(ClassList);
+                return ClassList;
             }
-            else { return false; }
+            else { return null; }
         }
 
-        internal bool Remove(List<Class>ClassList, int toRemove)
+        internal Class FindByID(int id)
         {
-            Class classToRemove = ClassList.Where(cl => cl.ClassID == toRemove)
-                                                 .ToList()
-                                                 .First();
-            ClassList.Remove(classToRemove);
+            Class ClassById = ClassList.Where(x => x.ClassID == id).ToList().First();
+            return ClassById;
+        }
+
+        internal Class FindByName(string name)
+        {
+            Class ClassByName = ClassList.Where(x => x.ClassName == name).ToList().First();
+            return ClassByName;
+        }
+
+        internal Class CreateClass(string cName)
+        {
+            Class newClass = new Class(cName,ClassList.Count() + 1);
+            return newClass;
+        }
+
+        internal bool IfExists(string name)
+        {
+            bool result = ClassList.Any(x => x.ClassName == name);
+            return result;
+        }
+
+        internal void Add (Class newClass)
+        {
+            ClassList.Add(newClass);
+        }
+
+        internal bool Remove(Class clasToRemove)
+        {                         
+            ClassList.Remove(clasToRemove);
             return true;
         }
 

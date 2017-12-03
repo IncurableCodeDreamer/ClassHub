@@ -1,52 +1,71 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace ClassHub
 {
     class StudentRepository
     { 
-        //List<Student> StudentList = new List<Student>();
-        //int studentIdIteration = 0;
-        FileOperations file = new FileOperations();
+        List<Student> StudentList = new List<Student>();
+        FileOperations fileOp = new FileOperations();
 
-        internal bool Add(List<Student> StudentList, List<Class> ClassList, string sName, string sSurname, string cName, int studentIdIteration)
+        internal List<Student> GetStudents(List<Class>ClassList)
         {
-            Class StudentClass = ClassList.Where(cl => cl.ClassName == cName)
-                                                      .Distinct()
-                                                      .First();
-            studentIdIteration = StudentList.Count() + 1;
-            StudentList.Add(new Student(studentIdIteration, StudentClass, sName, sSurname));
+            if (File.Exists("ClassHub.xml"))
+            {
+                StudentList = fileOp.LoadFile(StudentList,ClassList);
+                return StudentList;
+            }
+            else { return null; }
+        }
+
+        internal Student FindByID (int id)
+        {
+            Student StudentById = StudentList.Where(x => x.StudentID == id).ToList().First();
+            return StudentById;
+        }
+
+        internal List<Student> FindByClassName(string className)
+        {
+            List<Student> StudentListByClass = StudentList.Where(x => x.SClass.ClassName == className).ToList();
+            return StudentListByClass;
+        }
+
+        internal Student CreateNewStudent(string sName, string sSurname, Class StudentClass)
+        {
+           Student newStudent = new Student(StudentList.Count() + 1, StudentClass, sName, sSurname);
+           return newStudent;
+        }
+
+        internal Student CreateStudent (int id, string sName, string sSurname, Class StudentClass)
+        {
+            Student student = new Student(id, StudentClass, sName, sSurname);
+            return student;
+        }
+
+        internal bool Add(Student newStudent)
+        {
+            StudentList.Add(newStudent);
             return true;
         }
 
-        internal bool Edit(List<Student> StudentList, List<Class> ClassList, string toEdit, string toEditClass, string toEditName, string toEditSurname)
-        {
-            Student studentToEdit = StudentList.Where(st => st.StudentID == int.Parse(toEdit))
-                                                           .ToList()
-                                                           .First();
-            studentToEdit.Name = toEditName;
-            studentToEdit.Surname = toEditSurname;
-            studentToEdit.SClass.ClassName = toEditClass;
-            studentToEdit.SClass.ClassID = ClassList.Where(cl => cl.ClassName == toEditClass)
-                                                    .Select(cl => cl.ClassID)
-                                                    .ToList()
-                                                    .First();
+        internal bool Edit(Student oldStudent, Student newStudent)
+        {                                           
+            StudentList.Find(x => x == oldStudent).Name = newStudent.Name;
+            StudentList.Find(x => x == oldStudent).SClass = newStudent.SClass;
+            StudentList.Find(x => x == oldStudent).Surname = newStudent.Surname;
             return true;
         }
 
-        internal bool Remove(List<Student>StudentList, int toRemove)
+        internal bool Remove(Student studentToRemove)
         {
-            Student studentToRemove = StudentList.Where(st => st.StudentID == toRemove)
-                                                 .ToList()
-                                                 .First();
             StudentList.Remove(studentToRemove);
             return true;
         }
 
         internal void SaveFile(List<Student>StudentList,List<Class>ClassList)
         {
-            file.SaveNewFile(StudentList, ClassList);
+            fileOp.SaveNewFile(StudentList, ClassList);
         }
-
     }
 }

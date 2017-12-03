@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
 
 namespace ClassHub
 {
@@ -9,26 +6,13 @@ namespace ClassHub
     {
         static void Main(string[] args)
         {
-            List<Class> ClassList = new List<Class>();
-            int classIdIteration = 0;
+            char choice;            
+            ClassRepository classRep = new ClassRepository();
+            StudentRepository studentRep = new StudentRepository();
+            IWindowOperations windowOp = new ConsoleOperations();
+            var ClassList = classRep.GetClasses();
+            var StudentList = studentRep.GetStudents(ClassList);
 
-            List<Student> StudentList = new List<Student>();
-            int studentIdIteration = 0;
-
-            char choice;
-            string cName, sName, sSurname, classType;
-            int toRemove;
-            FileOperations file = new FileOperations();
-            ClassRepository cRep = new ClassRepository();
-            StudentRepository sRep = new StudentRepository();
-            WindowOperations winOp = new WindowOperations();
-
-            if (File.Exists("ClassHub.xml"))
-            {
-                var load = file.LoadFile(StudentList, ClassList);
-                StudentList = load.Item1;
-                ClassList = load.Item2;
-            }
             Console.WriteLine(" Hello.");
             while (true)
             {
@@ -53,99 +37,85 @@ namespace ClassHub
                 {
                     case '1':
                         Console.Write("\n Enter the type of the class: ");
-                        cName = Console.ReadLine();
-                        if (cRep.Add(ClassList, classIdIteration, cName))
+                        string cName = Console.ReadLine();
+                        bool ifExists = classRep.IfExists(cName);   
+                        if(!ifExists)
                         {
-                            classIdIteration = ClassList.Count;
-                            winOp.OperationSuccess(ClassList,classIdIteration);
+                            Class newClass = classRep.CreateClass(cName);
+                            classRep.Add(newClass);
+                            windowOp.OperationSuccess(newClass);
                         }
-                        else
-                        {
-                            winOp.OperationFailed();
-                        }                            
+                        else { windowOp.OperationFailed(); }                      
                         break;
                     case '2':
                         Console.WriteLine("\n Enter personal data of the student you want to add: ");
                         Console.Write(" Name: ");
-                        sName = Console.ReadLine();
+                        string sName = Console.ReadLine();
                         Console.Write(" Surname: ");
-                        sSurname = Console.ReadLine();
+                        string sSurname = Console.ReadLine();
                         Console.Write(" Type of the class: ");
                         cName = Console.ReadLine();
-                        if (sRep.Add(StudentList, ClassList, sName, sSurname, cName, studentIdIteration))
-                        {
-                            studentIdIteration = StudentList.Count;
-                            winOp.OperationSuccess(StudentList,studentIdIteration);
+                        Student newStudent = studentRep.CreateNewStudent(sName, sSurname, classRep.FindByName(cName));
+                        if (studentRep.Add(newStudent)) 
+                        {                           
+                            windowOp.OperationSuccess(newStudent);
                         }
-                        else { winOp.OperationFailed(); }
+                        else { windowOp.OperationFailed(); }
                         break;
                     case '3':
                         Console.WriteLine(" Existing classes:");
-                        winOp.Show(ClassList, StudentList);
+                        windowOp.Show(ClassList, StudentList);
                         Console.Write(" Select the class you want to show: ");
-                        classType = Console.ReadLine();
-                        var classToShow = StudentList.Where(st => st.SClass.ClassName == classType)
-                                                     .ToList();
-                        winOp.Show(classToShow);
+                        string classType = Console.ReadLine();
+                        var classToShow = studentRep.FindByClassName(classType);                                                  
+                        windowOp.Show(classToShow);
                         break;
                     case '4':
                         Console.WriteLine("\n Select the student you want to edit: ");
-                        winOp.Show(StudentList);
+                        windowOp.Show(StudentList);
                         Console.Write("\n Id: ");
-                        string toEdit = Console.ReadLine();
+                        int toEdit = int.Parse(Console.ReadLine());
                         Console.Write("\n Enter new data:" +
                                       "\n Name: ");
                         string toEditName = Console.ReadLine();
                         Console.Write(" Surname: ");
                         string toEditSurname = Console.ReadLine();
                         Console.Write(" Class: ");
-                        string toEditClass = Console.ReadLine();
-                        if (!File.Exists("ClassHub.xml"))
+                        string toEditClass = Console.ReadLine();                        
+                        Student studentToEdit = studentRep.FindByID(toEdit);
+                        Student student = studentRep.CreateStudent(studentToEdit.StudentID, toEditName, toEditSurname, classRep.FindByName(toEditClass));
+                        if (studentRep.Edit(studentToEdit,student))
                         {
-                            if (sRep.Edit(StudentList, ClassList, toEdit, toEditClass, toEditName, toEditSurname))
-                            {
-                                sRep.SaveFile(StudentList, ClassList);
-                                winOp.OperationSuccess(StudentList, int.Parse(toEdit));
-                            }
-                            else { winOp.OperationFailed(); }
+                            windowOp.OperationSuccess(student);
                         }
-                        else
-                        {
-                            var load = file.LoadFile(StudentList, ClassList);
-                            StudentList = load.Item1;
-                            ClassList = load.Item2;                                                 
-                            if (sRep.Edit(StudentList, ClassList, toEdit, toEditClass, toEditName, toEditSurname))
-                            {
-                                sRep.SaveFile(StudentList, ClassList);
-                                winOp.OperationSuccess(StudentList, int.Parse(toEdit));
-                            }
-                            else { winOp.OperationFailed(); }
-                        }
+                        else { windowOp.OperationFailed(); }                        
                         break;
                     case '5':
                         Console.WriteLine(" Select the class you want to remove.");
-                        winOp.Show(ClassList);
+                        windowOp.Show(ClassList);
                         Console.Write("\n Id: ");
-                        toRemove = int.Parse(Console.ReadLine());
-                        if (cRep.Remove(ClassList, toRemove))
+                        int toRemove = int.Parse(Console.ReadLine());
+                        Class classToRemove = classRep.FindByID(toRemove);
+                        if (classRep.Remove(classToRemove))
                         {
-                            winOp.OperationSuccess(ClassList,toRemove);
+                            windowOp.OperationSuccess(classToRemove);
                         }
-                        else { winOp.OperationFailed(); }
+                        else { windowOp.OperationFailed(); }
                         break;
                     case '6':
                         Console.WriteLine(" Select the student you want to remove.");
-                        winOp.Show(StudentList);
+                        windowOp.Show(StudentList);
                         Console.Write("\n Id: ");
                         toRemove = int.Parse(Console.ReadLine());
-                        if (sRep.Remove(StudentList, toRemove))
+                        Student studentToRemove = studentRep.FindByID(toRemove);
+                        if (studentRep.Remove(studentToRemove))
                         {
-                            winOp.OperationSuccess(StudentList,toRemove);
+                            windowOp.OperationSuccess(studentToRemove);
                         }
-                        else{ winOp.OperationFailed(); }
+                        else { windowOp.OperationFailed(); }
                         break;
                     case '7':
-                        sRep.SaveFile(StudentList, ClassList);
+                        studentRep.SaveFile(StudentList, ClassList);
                         Console.WriteLine(" The file 'ClassHub.xml' has been saved.");
                         break;
                     default:

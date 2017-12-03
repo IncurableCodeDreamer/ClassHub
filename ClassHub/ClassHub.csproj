@@ -44,14 +44,14 @@
   <ItemGroup>
     <Compile Include="Class.cs" />
     <Compile Include="FileOperations.cs" />
-    <Compile Include="WindowOperations.cs" />
+    <Compile Include="ConsoleOperations.cs" />
     <Compile Include="StudentRepository.cs" />
     <Compile Include="Subject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Student.cs" />
     <Compile Include="ClassRepository.cs" />
-    <Compile Include="IUser.cs" />
+    <Compile Include="IWindowOperatios.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

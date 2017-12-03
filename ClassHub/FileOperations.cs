@@ -49,7 +49,7 @@ namespace ClassHub
             w.Close();
         }       
 
-        internal Tuple<List<Student>, List<Class>> LoadFile(List<Student> StudentList, List<Class> ClassList)
+        internal List<Class> LoadFile (List<Class>ClassList)
         {
             document = XDocument.Load("ClassHub.xml");
             ClassList = (
@@ -58,6 +58,12 @@ namespace ClassHub
                       cl.Element("Name").Value,
                       int.Parse(cl.Attribute("ClassID").Value)))
                       .ToList();
+            return ClassList;
+        }
+
+        internal List<Student> LoadFile(List<Student>StudentList,List<Class>ClassList)
+        {
+            document = XDocument.Load("ClassHub.xml");
             StudentList = (
                  from st in document.Root.Elements("Student")
                  select new Student(
@@ -67,7 +73,7 @@ namespace ClassHub
                      st.Element("Name").Value,
                      st.Element("Surname").Value))
                      .ToList();
-            return Tuple.Create(StudentList, ClassList);
+            return StudentList;
         }
     }
 }
